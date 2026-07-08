@@ -1,64 +1,41 @@
-# Taible-io — Architecture (as code)
+# Taible-io — Architecture
 
-The **system of record for how Taible is built**. Every diagram is [D2](https://d2lang.com) source, versioned in git. Nothing is hand-exported — CI renders each `.d2` to SVG on every push.
+Diagrams are [D2](https://d2lang.com) source, versioned in git. CI renders them to SVG on every push — the `.d2` is the source of truth, never hand-export.
 
-> New to Taible? Read the org onboarding first: **[Taible-io/playbok_startup](https://github.com/Taible-io/playbok_startup)** → `README.md` then `organization-context.md`. This repo is the "second door": the whole system, as code.
+## The system
 
-**Stage:** 🔧 Early. The diagrams here are first-pass sketches meant to evolve — change them via PR.
+A restaurant **voice agent**. A diner scans a QR at the table, talks to the agent in the browser over WebRTC, and a **self-hosted AMD GPU (ROCm)** pipeline does speech→LLM→speech. The LLM calls our MCP tools to read the menu and place orders.
 
----
-
-## Why D2, C4, and CI
-
-- **D2 source of truth** — diagrams are text, so they diff, review, and version like any code. `git log` becomes the evolution of the company's design.
-- **[C4 model](https://c4model.com)** — diagrams are organized from big-picture to detail (Context → Container → Component), so they stay navigable as the system grows.
-- **CI rendering** — GitHub Actions renders `.d2` → `.svg` reproducibly (pinned D2 version). Source is truth; renders are generated. See [ADR-0002](./adr/0002-d2-c4-and-ci-rendering.md).
-
----
-
-## Layout
+**Canonical diagram:** [`diagrams/container/voice-agent.d2`](./diagrams/container/voice-agent.d2)
 
 ```
-architecture/
-├── diagrams/
-│   ├── context/          # C4 L1 — system in its environment (people + external systems)
-│   ├── container/        # C4 L2 — apps, services, datastores and how they talk
-│   ├── component/        # C4 L3 — inside a single service (example: ai-model-nlp)
-│   ├── data/             # database / data model sketches
-│   └── ui/               # UI flows and screen maps
-├── rendered/             # SVGs produced by CI (do not edit by hand)
-├── adr/                  # Architecture Decision Records (the "why")
-└── .github/workflows/    # render-d2.yml (the render pipeline)
+QR → PWA (WebRTC) → Pipecat/LiveKit (CPU)
+      → AMD GPU/ROCm: Whisper STT → vLLM → Kokoro TTS
+      → MCP tools → Postgres + POS
 ```
 
----
+## Stack
 
-## Add or change a diagram
+| Stage | Tech | Host |
+|---|---|---|
+| STT | whisper.cpp (HIP) | **AMD GPU · ROCm** |
+| LLM | vLLM — Llama 3.1 8B / Qwen 2.5 7B | **AMD GPU · ROCm** |
+| TTS | Kokoro (PyTorch/ROCm) | **AMD GPU · ROCm** |
+| Orchestration | Pipecat / LiveKit Agents | CPU |
+| Tools | MCP server (`get_menu`, `place_order`, …) | small VPS / Fly.io |
+| Data | Postgres / Supabase + POS/kitchen | managed |
 
-1. Edit or add a `.d2` file under the right `diagrams/<level>/` folder.
-2. Preview locally (optional): install D2, then `d2 diagrams/context/system-context.d2 out.svg`.
-3. Open a PR. CI validates that every diagram renders. On merge to `main`, CI writes the SVGs into `rendered/`.
-4. If it's a **decision** (a tradeoff, not just a drawing), add an ADR — see [`adr/`](./adr).
+Fits in **24 GB VRAM** (e.g. Radeon 7900 XTX). **AMD/ROCm on AMD cloud is a hard requirement** — no CUDA.
 
-Install D2 locally:
+## Edit a diagram
+
+1. Change a `.d2` under `diagrams/`.
+2. Open a PR — CI checks it renders; merge to `main` writes the SVG to `rendered/`.
+
+Preview locally:
 ```bash
 curl -fsSL https://d2lang.com/install.sh | sh -s --
+d2 diagrams/container/voice-agent.d2 out.svg
 ```
 
----
-
-## Diagrams today
-
-| File | Level | What it shows |
-|---|---|---|
-| `diagrams/context/system-context.d2` | C4 L1 | Diners, restaurant partners, and the external systems around Taible. |
-| `diagrams/container/containers.d2` | C4 L2 | Mobile app, API gateway, the three services, and the database. |
-| `diagrams/component/ai-model-nlp-components.d2` | C4 L3 | Inside the AI/NLP service (example component view). |
-| `diagrams/data/database.d2` | Data | First-pass data model (users, restaurants, orders, payments). |
-| `diagrams/ui/ui-flows.d2` | UI | Core mobile ordering flow. |
-
-These map to the service repos: [`ai-model-nlp`](https://github.com/Taible-io/ai-model-nlp), [`mobile-app`](https://github.com/Taible-io/mobile-app), [`crypto-payments`](https://github.com/Taible-io/crypto-payments), [`restaurant-partnerships`](https://github.com/Taible-io/restaurant-partnerships).
-
----
-
-*Part of [Taible-io](https://github.com/Taible-io). Owner: caeltarifa. Never commit secrets.*
+Decisions behind this setup: [`adr/`](./adr). New to Taible? Start at [playbok_startup](https://github.com/Taible-io/playbok_startup).
