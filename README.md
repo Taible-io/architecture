@@ -14,6 +14,20 @@ QR → PWA (WebRTC) → Pipecat/LiveKit (CPU)
       → MCP tools → Postgres + POS
 ```
 
+## Organized by C4
+
+We manage this repo with the **[C4 model](https://c4model.com)**: one folder per zoom level, big-picture → detail. Put each diagram at the level it describes ([ADR-0002](./adr/0002-d2-c4-and-ci-rendering.md)).
+
+| Folder | C4 level | Answers | Status |
+|---|---|---|---|
+| `diagrams/context/` | 1 · Context | Who uses Taible and what external systems it touches | ⬜ to add |
+| `diagrams/container/` | 2 · Container | The apps/services/datastores and how they talk | ✅ `voice-agent.d2` |
+| `diagrams/component/` | 3 · Component | Inside one container (e.g. the ROCm pipeline) | ⬜ to add |
+| `diagrams/data/` | — | Database / data-model sketches | ⬜ to add |
+| `diagrams/ui/` | — | UI flows and screen maps | ⬜ to add |
+
+Rule of thumb: **start at Container** (where we are), add a **Context** view once external integrations firm up, and a **Component** view for any container complex enough to need one.
+
 ## Stack
 
 | Stage | Tech | Host |
@@ -29,7 +43,7 @@ Fits in **24 GB VRAM** (e.g. Radeon 7900 XTX). **AMD/ROCm on AMD cloud is a hard
 
 ## Edit a diagram
 
-1. Change a `.d2` under `diagrams/`.
+1. Add or change a `.d2` in the C4 folder that matches its level (see table above).
 2. Open a PR — CI checks it renders; merge to `main` writes the SVG to `rendered/`.
 
 Preview locally:
