@@ -2,7 +2,7 @@
 
 Diagrams are [D2](https://d2lang.com) source, versioned in git. CI renders them to SVG on every push — the `.d2` is the source of truth, never hand-export.
 
-> **Just want to look?** Paste any `.d2` into the **[D2 Playground](https://play.d2lang.com)** to render it in your browser — no install.
+> **Just want to look?** Paste any `.d2` into the **[D2 Playground](https://play.d2lang.com/)** to render it in your browser — no install.
 
 ## The system
 
@@ -49,7 +49,7 @@ Fits in **24 GB VRAM** (e.g. Radeon 7900 XTX). **AMD/ROCm on AMD cloud is a hard
 2. Open a PR — CI checks it renders; merge to `main` writes the SVG to `rendered/`.
 
 Preview options:
-- **In-browser (no install):** paste the `.d2` into the **[D2 Playground](https://play.d2lang.com)**.
+- **In-browser (no install):** paste the `.d2` into the **[D2 Playground](https://play.d2lang.com/)**.
 - **Local:**
   ```bash
   curl -fsSL https://d2lang.com/install.sh | sh -s --
