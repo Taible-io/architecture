@@ -19,7 +19,8 @@ permissions:
 
 env:
   # Pin the D2 version for reproducible renders. Bump deliberately.
-  D2_VERSION: v0.6.9
+  # v0.7.1 verified locally against diagrams/container/voice-agent.d2.
+  D2_VERSION: v0.7.1
   # D2 theme id applied to every diagram so they read as one system.
   # 0 = neutral default. See https://d2lang.com/tour/themes
   DIAGRAM_THEME: '0'
