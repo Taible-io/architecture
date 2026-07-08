@@ -1,0 +1,41 @@
+# C4 Level 2 — Containers
+# Apps, services and datastores inside Taible, and how they connect.
+
+direction: right
+
+customer: Diner {
+  shape: person
+}
+partner: Restaurant Partner {
+  shape: person
+}
+
+taible: Taible Platform {
+  mobile: Mobile App
+  api: API Gateway
+  nlp: AI/NLP Service (ai-model-nlp)
+  payments: Crypto Payments Service (crypto-payments)
+  partners: Partnerships Service (restaurant-partnerships)
+  db: Primary Database {
+    shape: cylinder
+  }
+}
+
+ext_chain: Crypto Payment Network {
+  shape: cloud
+}
+ext_pos: Restaurant POS Systems {
+  shape: cloud
+}
+
+customer -> taible.mobile: Uses
+partner -> taible.partners: Onboards via portal
+taible.mobile -> taible.api: HTTPS / JSON
+taible.api -> taible.nlp: Query intelligence
+taible.api -> taible.payments: Checkout
+taible.api -> taible.partners: Restaurant data
+taible.nlp -> taible.db
+taible.payments -> taible.db
+taible.partners -> taible.db
+taible.payments -> ext_chain: Settle
+taible.partners <-> ext_pos: Sync
