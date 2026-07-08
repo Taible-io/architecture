@@ -22,7 +22,7 @@ We manage this repo with the **[C4 model](https://c4model.com)**: one folder per
 
 | Folder | C4 level | Answers | Status |
 |---|---|---|---|
-| `diagrams/context/` | 1 · Context | Who uses Taible and what external systems it touches | ⬜ to add |
+| `diagrams/context/` | 1 · Context | Who uses Taible and what external systems it touches | ✅ `system-context.d2` |
 | `diagrams/container/` | 2 · Container | The apps/services/datastores and how they talk | ✅ `voice-agent.d2` |
 | `diagrams/component/` | 3 · Component | Inside one container (e.g. the ROCm pipeline) | ⬜ to add |
 | `diagrams/data/` | — | Database / data-model sketches | ⬜ to add |
