@@ -56,4 +56,4 @@ Preview options:
   d2 diagrams/container/voice-agent.d2 out.svg
   ```
 
-Decisions behind this setup: [`adr/`](./adr). New to Taible? Start at [playbok_startup](https://github.com/Taible-io/playbok_startup).
+Decisions behind this setup: [`adr/`](./adr). New to Taible? Start at [playbook_startup](https://github.com/Taible-io/playbook_startup).
